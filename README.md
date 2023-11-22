@@ -7,6 +7,10 @@ execution.
 
 ## Features
 
+- **Interpretability**: The model generates plans that are not only actionable
+  but also easily readable. This ensures that every step of the plan is
+  transparent and understandable, enhancing trust in the agent's decision-making
+  process.
 - **Reliable Execution**: The agent is committed to executing the plan as
   formulated, reflecting the project's dedication to dependability.
 - **TypeScript for Formal Verification**: TypeScript is key in thoroughly
