@@ -3,7 +3,7 @@ import chalk from "chalk";
 
 const main = async () => {
   const task = prompt(
-    "\t" + chalk.black(chalk.bgWhite("What do you want me to do?\n")),
+    "\t" + chalk.black(chalk.bgWhite("What can I help you with?\n")),
   ) as string;
   const outputSchema = undefined;
   // const instruction =
