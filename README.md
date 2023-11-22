@@ -15,7 +15,7 @@ execution.
 
 ## Example Usage
 
-<img src="./fix.png" alt="Faithful Agent Example" width="600" style="border-radius: 20px;">
+<img src="./fix.png" alt="Faithful Agent Example" max-width="600" style="border-radius: 20px;">
 
 ## Why TypeScript? 🤔
 
