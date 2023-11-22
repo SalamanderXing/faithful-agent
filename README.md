@@ -45,6 +45,7 @@ Thanks [@Teknium1](https://twitter.com/Teknium1),
 
 1. **Prerequisites**: The easiest way to run it is with [Bun](https://bun.sh)
    but you can also use `ts-node`.
+
 2. **Clone and Install**:
    ```bash
    git clone https://github.com/salamanderXing/faithful-agent
@@ -75,6 +76,8 @@ Faithful Agent is under heavy development and still unstable. Some near-term
 experiments include
 
 - fixing bugs
+- extensive tests
+- improve docs
 - testing it with larger models
 
 ---
