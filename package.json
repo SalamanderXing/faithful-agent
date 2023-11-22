@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "cli-highlight": "^2.1.11",
+    "inquirer": "^9.2.12",
     "prettier": "^3.1.0"
   }
 }

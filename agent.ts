@@ -1,6 +1,6 @@
 import assert from "assert";
-import { getModelCall } from "./model_call";
-//import { CLIEngine } from "eslint";
+import { Model } from "./model_call";
+import inquirer from "inquirer";
 import config from "./config/main";
 import ts from "typescript";
 import fs from "fs/promises";
@@ -9,18 +9,6 @@ import chalk from "chalk";
 import hljs from "cli-highlight";
 import getAllDiagnostics from "./diagnostics";
 
-// const code = `
-// import path from "path";
-//
-// //;fdsf; = 243m sqd
-// let boy: number = 123
-// boy = 'hello'
-// // const ciao = "ciao";
-//
-// console.log(ciao as string)
-// `; // Your TypeScript code
-//
-//
 const isValidSchema = (schema: Record<string, any>) => {
   return true; // TODO
 };
@@ -31,8 +19,7 @@ function highlightCode(code: string, language = "typescript") {
 }
 
 const getFunction = async (code: string) => {
-  const compiledFilePath = "./" +
-    path.join(config.executeDir, "compiled.ts");
+  const compiledFilePath = "./compiled.ts";
   await fs.writeFile(compiledFilePath, code);
   return async () => {
     const res = await import(compiledFilePath);
@@ -41,9 +28,10 @@ const getFunction = async (code: string) => {
 };
 
 const correctDiagnostics = async (
+  model: Model,
   code: string,
   task: string,
-  maxDiagnosticRetries = 5,
+  maxDiagnosticRetries = 3,
   maxDiagnostics = 5,
 ): Promise<string | null> => {
   let diagnosticResults = await getAllDiagnostics(code);
@@ -60,22 +48,20 @@ const correctDiagnostics = async (
     if (diagnostics.length === 0) {
       console.log(chalk.green("No lints!"));
     } else {
-      for (const diagnostic of diagnostics) {
-        console.log(chalk.red(diagnostic));
-      }
+      console.log(chalk.red(diagnosticResults.diagnosticsString));
+      model.addUserMessage(
+        `
+I got these errors when I tried to run your code. Give me the updated version to fix them. 
+Don't tell me to install anything, do it with code or create an new Agent.
+
+Errors from your code given by TypeScript and ESLint:
+${diagnosticResults.diagnosticsString}
+
+Reason step-by-step on why your code might be wrong and give me the updated version.
+`,
+      );
       console.log(chalk.blueBright("Trying to fix them..."));
-      // @ts-ignore
-      const correctUserPrompt = config.correctPrompt.user(
-        // @ts-ignore
-        diagnosticResults.lintedCode,
-        task,
-      );
-      const fixingModelCall = getModelCall(
-        config.correctPrompt.system(),
-        correctUserPrompt,
-        true,
-      );
-      code = await fixingModelCall() as string;
+      code = await model.run();
       console.log(chalk.blueBright("Corrected Candidte Plan:"));
       console.log(`---\n${chalk.white(highlightCode(code))}\n---`);
       diagnosticResults = await getAllDiagnostics(code);
@@ -93,20 +79,30 @@ const correctDiagnostics = async (
   }
   return code;
 };
-const getValidPlan = async (task: string, modelCall: () => Promise<any>) => {
+const getValidPlan = async (task: string, model: Model) => {
   let parsedPlan = null as null | (() => Promise<any>);
   let rawPlan = null as null | string;
   while (!parsedPlan) {
-    rawPlan = await modelCall() as string;
+    model.reset();
+    rawPlan = await model.run();
+    let diagnosticResults = await getAllDiagnostics(rawPlan);
     console.log(chalk.blueBright("Candidte Plan:"));
-    console.log(`---\n${chalk.white(highlightCode(rawPlan))}\n---`);
-    rawPlan = await correctDiagnostics(rawPlan, task);
+    console.log(
+      `\n${chalk.white(highlightCode(diagnosticResults.lintedCode))}\n`,
+    );
+    if (diagnosticResults.diagnostics.length > 0) {
+      rawPlan = await correctDiagnostics(model, rawPlan, task);
+    }
     if (rawPlan === null) {
       console.log(chalk.red("Failed to fix lints, retrying..."));
       continue;
     }
+    if (rawPlan === "") {
+      console.log(chalk.red("Empty plan, retrying..."));
+      continue;
+    }
     try {
-      parsedPlan = await getFunction(rawPlan as string);
+      parsedPlan = await getFunction(rawPlan);
     } catch (e) {
       console.log(e);
       console.log(chalk.red("Invalid plan, retrying..."));
@@ -120,27 +116,61 @@ const getValidPlan = async (task: string, modelCall: () => Promise<any>) => {
     parsedPlan: () => Promise<any>;
   };
 };
-const getAgent = (
-  instruction: string,
-  jsonSchema?: Record<string, any>,
-) => {
-  if (jsonSchema) {
-    assert(isValidSchema(jsonSchema));
+
+async function getAction() {
+  const { action } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "action",
+      message: "What do you want to do with this plan?",
+      choices: [
+        { name: "Execute", value: "e" },
+        { name: "Quit", value: "q" },
+        { name: "Retry", value: "r" },
+      ],
+    },
+  ]);
+  return action;
+}
+
+class Agent {
+  task: string;
+  input?: Record<string, any>;
+  outputSchema?: Record<string, any>;
+
+  constructor({
+    task: task,
+    input,
+    outputSchema,
+  }: {
+    task: string;
+    input?: Record<string, any>;
+    outputSchema?: Record<string, any>;
+  }) {
+    this.task = task;
+    this.input = input;
+    this.outputSchema = outputSchema;
+    if (this.outputSchema) {
+      assert(isValidSchema(this.outputSchema));
+    }
   }
-  const agentSystemMessage = config.agentPrompt.system();
-  const agentUserMessage = config.agentPrompt.user(instruction, jsonSchema);
-  const modelCall = getModelCall(agentSystemMessage, agentUserMessage, true);
-  return async () => {
+
+  async run() {
+    const agentSystemMessage = config.agentPrompt.system();
+    const agentUserMessage = config.agentPrompt.user(
+      this.task,
+      this.input,
+      this.outputSchema,
+    );
+    const model = new Model(agentSystemMessage, agentUserMessage, false);
     let answer = "";
-    let parsedPlan = null as null | (() => Promise<any>);
+    let parsedPlan: null | (() => Promise<any>) = null;
+
     while (parsedPlan === null) {
-      const result = await getValidPlan(instruction, modelCall);
+      const result = await getValidPlan(this.task, model);
       parsedPlan = result.parsedPlan;
-      while (answer !== "e" && answer !== "q" && answer !== "r") {
-        answer = prompt(chalk.red(
-          `What do you want to do with this plan? (e) execute, (q) quit, (r) retry`,
-        )) as string;
-      }
+
+      answer = await getAction();
       if (answer === "q") {
         return;
       }
@@ -148,11 +178,10 @@ const getAgent = (
         parsedPlan = null;
       }
     }
-    const output = await (await parsedPlan());
-    console.log(chalk.blueBright("Output:"));
-    console.log(output);
-    return output;
-  };
-};
 
-export default getAgent;
+    const output = await (await parsedPlan());
+    return output;
+  }
+}
+
+export default Agent;

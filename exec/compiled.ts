@@ -1,12 +1,18 @@
-import { exec } from "child_process";
-import * as fs from "fs";
-import * as path from "path";
+import getAgent from "./agent";
+import fs from "fs/promises";
 
-const exampleHtmlPath = path.join(process.cwd(), "example.html");
-const newFileName = "boy.html";
+const fileContent = await fs.readFile("./main.py", "utf8");
 
-// Change the file name
-fs.renameSync(exampleHtmlPath, `${newFileName}.html`);
+const agent = getAgent({
+  instruction: "Give me the fixed version of this python code.",
+  input: {
+    code: fileContent,
+  },
+  outputSchema: {
+    code: "string",
+  },
+});
 
-// Open the file in the default browser
-exec("xdg-open " + path.join(process.cwd(), newFileName) + ".html");
+const { code } = await agent();
+
+await fs.writeFile("./fixed_main.py", code);

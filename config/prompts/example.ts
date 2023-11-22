@@ -1,9 +1,10 @@
 import fs from "fs";
 import { execa } from "execa";
-import { getAgent } from "./agent"; // import agent
+import Agent from "./agent"; // import agent
+
 
 await execa("npm", ["install", "mysql2"]); // install dependency
-const mysql = await import("mysql2/promise"); // import dependency
+const mysql = await import("mysql2/promise"); // import dependency using dynamic import!!
 try {
   const conn = await mysql.createConnection({
     host: "localhost",
@@ -18,10 +19,17 @@ try {
 
   await conn.end();
   // create an agent for a complex task
-  const agent = getAgent(
-    "Compress the db file 'db_dump.sql' into a .tar.gz archive.",
+  const agent = new Agent(
+    { task: "Compress the db file 'db_dump.sql' into a .tar.gz archive." },
   );
-  await agent(); // execute it
+  await agent.run();
 } catch (error) {
-  console.error(`Error: ${error}`);
+  const handlingErrorAgent = new Agent(
+    {
+      task:
+        "I was executing the task 'Compress the db file 'db_dump.sql' into a .tar.gz archive.' but I got an error. Try to solve it in a different way according to the error log in the input.",
+      input: { error: String(error) },
+    },
+  );
+  await handlingErrorAgent.run();
 }

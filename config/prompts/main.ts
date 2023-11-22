@@ -1,5 +1,5 @@
 interface Prompt {
-  user: () => string;
+  user: (...args: any[]) => string;
   system: () => string;
 }
 export default Prompt;
