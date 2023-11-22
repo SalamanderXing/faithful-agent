@@ -34,8 +34,9 @@ This robustness is vital in ensuring plan accuracy and reliability.
 
 The project utilizes the
 [OpenHermes2.5 model](https://huggingface.co/teknium/OpenHermes-2.5-Mistral-7B),
-tested using both Ollama and [Replicate.com](https://replicate.com). This model
-offers a balance between performance and the ability to run locally.
+because it's the smallest model I could find that is remotely good enough for
+some experiments. I tested using both Ollama and
+[Replicate.com](https://replicate.com).
 
 ## Installation and Setup
 
