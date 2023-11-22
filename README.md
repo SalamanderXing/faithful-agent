@@ -38,7 +38,8 @@ because it's the smallest (7B!) model I could find that is remotely good enough
 for experimenting with agents. I tested using both Ollama and
 [Replicate.com](https://replicate.com).
 
-Thanks [@Teknium1](https://twitter.com/Teknium1), [Mistral.ai](https://twitter.com/MistralAI).
+Thanks [@Teknium1](https://twitter.com/Teknium1),
+[Mistral.ai](https://twitter.com/MistralAI).
 
 ## Installation and Setup
 
@@ -61,15 +62,6 @@ Thanks [@Teknium1](https://twitter.com/Teknium1), [Mistral.ai](https://twitter.c
    It will prompt you first what is its task and then again to confirm each plan
    before execution.
 
-## Citing This Work
-
-If you're using or referencing Faithful Agent in your work, please use the
-following citation format:
-
-```
-[Your preferred citation format, e.g., APA, MLA, etc., with project details]
-```
-
 ## Contributing
 
 Your contributions and feedback are highly valued. If you're building upon this
@@ -85,6 +77,14 @@ experiments include
 - testing it with larger models
 
 ---
+
+## Citing This Work
+
+If you're using or referencing Faithful Agent in your work, please use the
+following citation format:
+
+Zani, G. (2023). Faithful Agent: TypeScript-powered AI planning and execution
+[Computer software]. GitHub. https://github.com/salamanderXing/faithful-agent
 
 ## Contact
 
