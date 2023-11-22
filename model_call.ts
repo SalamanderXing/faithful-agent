@@ -63,7 +63,16 @@ const runOllamaModel = async (systemMessage: string, userMessage: string) => {
     },
     body: JSON.stringify(postData),
   });
-  const result = (await response.json()).response;
+  let result;
+  try {
+    const tmp = await response.json();
+    console.log(result);
+    result = tmp.response;
+  } catch (e) {
+    console.log(e);
+    console.log(await response.text());
+    throw e;
+  }
   return result;
 };
 function extractCodeBlockContent(inputString: string): string {
@@ -93,9 +102,9 @@ const getModelCall = (
   verbose: boolean = false,
 ): () => Promise<any> => {
   if (verbose) {
-    console.log(chalk.blueBright("System message:"));
+    console.log(chalk.bgCyan("System message:"));
     console.log(systemMessage);
-    console.log(chalk.blueBright("User message:"));
+    console.log(chalk.bgBlue("User message:"));
     console.log(userMessage);
   }
   return async () => {

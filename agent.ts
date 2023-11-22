@@ -129,7 +129,7 @@ const getAgent = (
   }
   const agentSystemMessage = config.agentPrompt.system();
   const agentUserMessage = config.agentPrompt.user(instruction, jsonSchema);
-  const modelCall = getModelCall(agentSystemMessage, agentUserMessage);
+  const modelCall = getModelCall(agentSystemMessage, agentUserMessage, true);
   return async () => {
     let answer = "";
     let parsedPlan = null as null | (() => Promise<any>);

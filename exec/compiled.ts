@@ -1,19 +1,12 @@
-import { readFile, writeFile } from "fs/promises";
 import { exec } from "child_process";
-import assert from "assert";
+import * as fs from "fs";
+import * as path from "path";
 
-const content = await (async () => {
-  try {
-    const response = await fetch("https://example.com");
-    return await response.text();
-  } catch (error) {
-    console.error("Error fetching the page:", error);
-    return "";
-  }
-})();
+const exampleHtmlPath = path.join(process.cwd(), "example.html");
+const newFileName = "boy.html";
 
-assert.strictEqual(typeof content, "string");
+// Change the file name
+fs.renameSync(exampleHtmlPath, `${newFileName}.html`);
 
-await writeFile("example.html", content);
-
-exec("xdg-open example.html");
+// Open the file in the default browser
+exec("xdg-open " + path.join(process.cwd(), newFileName) + ".html");
