@@ -34,9 +34,11 @@ This robustness is vital in ensuring plan accuracy and reliability.
 
 The project utilizes the
 [OpenHermes2.5 model](https://huggingface.co/teknium/OpenHermes-2.5-Mistral-7B),
-because it's the smallest model I could find that is remotely good enough for
-some experiments. I tested using both Ollama and
+because it's the smallest (7B!) model I could find that is remotely good enough
+for experimenting with agents. I tested using both Ollama and
 [Replicate.com](https://replicate.com).
+
+Thanks [@Teknium1](https://twitter.com/Teknium1), [Mistral.ai](https://twitter.com/MistralAI).
 
 ## Installation and Setup
 
