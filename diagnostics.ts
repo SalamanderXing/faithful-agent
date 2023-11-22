@@ -16,41 +16,11 @@ const eslint = new ESLint({
     parserOptions: {
       ecmaVersion: 2022,
       sourceType: "module",
+      loggerFn: () => {},
     },
     rules: {
       "no-unused-expressions": "error",
     },
-    //   "eqeqeq": "error", // Enforce strict equality
-    //   "no-fallthrough": "error", // Prevent case statement fallthrough
-    //   "no-redeclare": "error", // Disallow variable redeclaration
-    //   "no-unused-expressions": "warn", // Warn for unused expressions
-    //   "no-use-before-define": "error", // Disallow use before definition
-    //   "array-callback-return": "warn", // Warn if array callbacks do not return
-    //   "block-scoped-var": "warn", // Warn for var outside of block scope
-    //   "consistent-return": "warn", // Warn for inconsistent return
-    //   "curly": "warn", // Require curly braces
-    //   "no-alert": "warn", // Warn against alert, confirm, prompt
-    //   "no-else-return": "warn", // Warn for return before else
-    //   "no-multi-spaces": "warn", // Warn for multiple spaces
-    //   "no-unused-vars": "warn", // Warn for unused variables
-    //   "no-var": "error", // Require let/const instead of var
-    //   "prefer-const": "error", // Prefer const over let
-    //   "prefer-template": "warn", // Prefer template literals
-    //   "camelcase": "warn", // Enforce camelcase naming
-    //   "indent": ["warn", 2], // Warn for indentation, 2 spaces
-    //   "linebreak-style": ["warn", "unix"], // Enforce linebreak style
-    //   "semi": ["warn", "always"], // Require semicolons
-    //   "no-duplicate-imports": "error", // Disallow duplicate imports
-    //   "no-useless-constructor": "warn", // Warn for useless constructors
-    //   "prefer-arrow-callback": "warn", // Prefer arrow functions in callbacks
-    //   "prefer-rest-params": "warn", // Suggest rest parameters
-    //   "prefer-spread": "warn", // Suggest spread operator
-    //   "@typescript-eslint/explicit-function-return-type": "warn", // Require explicit function return type
-    //   "@typescript-eslint/no-explicit-any": "warn", // Warn against explicit any
-    //   "@typescript-eslint/no-non-null-assertion": "warn", // Warn against non-null assertions
-    //   "@typescript-eslint/type-annotation-spacing": "warn", // Enforce spacing in type annotations
-    // },
-    // config.linterRules,
     env: {
       es6: true,
       node: true,
@@ -58,6 +28,13 @@ const eslint = new ESLint({
     plugins: ["@typescript-eslint"],
   },
 });
+
+const getLinterDiagnostics = async (code: string) => {
+  const messages = await eslint.lintText(code);
+  return messages.filter((x: ESLint.LintMessage) => x.line !== undefined).map((
+    el: ESLint.LintMessage,
+  ) => prettifyLinterDiagnostic(code, el));
+};
 
 const compilerOptions = {
   module: ts.ModuleKind.NodeNext,
@@ -91,13 +68,6 @@ const prettifyTSDiagnostic = (code: string, diagnostic: ts.Diagnostic) => {
   //return `${line}: "${code.split("\n")[line]}" ${message}`;
   // also saves the severity
   return { line, issue: message, codeLine: code.split("\n")[line] };
-};
-
-const getLinterDiagnostics = async (code: string) => {
-  const messages = await eslint.lintText(code);
-  return messages.filter((x: ESLint.LintMessage) => x.line !== undefined).map((
-    el: ESLint.LintMessage,
-  ) => prettifyLinterDiagnostic(code, el));
 };
 
 const prettifyLinterDiagnostic = (
@@ -150,10 +120,11 @@ const getAllDiagnostics = async (
       codeLine: code.split("\n")[code.split("\n").length - 1],
     });
   }
+  const todos = noTODOs(code);
   const lintedCode = code.split("\n").map((line, i) =>
     processDiagnostics(line, i, tsDiagnostics, linterDiagnostics)
   ).join("\n");
-  const diagnostics = [...tsDiagnostics, ...linterDiagnostics];
+  const diagnostics = [...tsDiagnostics, ...linterDiagnostics, ...todos];
   const diagnosticsString = diagnostics.reduce((acc, diagnostic) => {
     return `${acc}\n- ${diagnostic.codeLine}: ${diagnostic.issue}`;
   }, "");
@@ -162,6 +133,18 @@ const getAllDiagnostics = async (
     lintedCode,
     diagnosticsString,
   };
+};
+
+const noTODOs = (code: string) => {
+  const lines = code.split("\n");
+  const todos = lines.map((x, i) => [x, i] as [string, number]).filter((x) =>
+    x[0].includes("TODO")
+  ).map((x) => ({
+    line: x[1],
+    issue: "TODOs are not allowed in the code",
+    codeLine: x[0],
+  }));
+  return todos;
 };
 
 function extractDefaultExport(script: string): string {

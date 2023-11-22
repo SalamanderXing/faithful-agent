@@ -1,36 +1,19 @@
-import fs from "fs/promises";
-import Agent from "./agent.js"; // import agent
+import fs from 'fs/promises';
+import Agent from './agent'; // import agent
 
-// {
-//   "task": "Fix the code.",
-//   "input": {
-//     "code": "const a = 3\n\nconsole.log(a1) // prints a\n"
-//   },
-//   "outputSchema": {
-//     "type": "object",
-//     "properties": {
-//       "fixedCode": {
-//         "type": "string"
-//       }
-//     }
-//   }
-// }
+const fileContent = await fs.readFile('main.js', 'utf8');
 
 const agent = new Agent({
-  task: "Fix the code.",
-  input: {
-    code: `const a = 3\n\nconsole.log(a1) // prints a\n`
-  },
-  outputSchema: {
-    type: "object",
-    properties: {
-      fixedCode: {
-        type: "string"
-      }
-    }
-  }
+  task: 'Fix the JavaScript code in main.js and write the fixed version in main_fixed.js',
+  input: undefined,
+  outputSchema: undefined,
 });
-// fixedCode is defined in the schema above
-const { fixedCode } = await agent.run(); // run takes no arguments
 
-await fs.writeFile("fixed_code.js", fixedCode);
+try {
+  await agent.run();
+} catch (error) {
+  console.error(error);
+}
+
+const fixedContent = await fs.readFile('main_fixed.js', 'utf8');
+await fs.writeFile('main_fixed.js', fixedContent);

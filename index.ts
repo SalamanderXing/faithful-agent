@@ -18,7 +18,6 @@ const main = async () => {
   // const instruction = "create a file in the current directory named 'hello.py' that prints hello world";
   // const instruction = "Raise slightly the volume on my Linux machine.";
   // const instruction = "Check the current weather in Amsterdam.";
-  console.log({ task });
   const agent = new Agent({ task, outputSchema });
   const output = await agent.run();
   console.log({ output });

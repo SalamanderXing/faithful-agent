@@ -108,6 +108,8 @@ const getValidPlan = async (task: string, model: Model) => {
       console.log(chalk.red("Invalid plan, retrying..."));
     }
   }
+  // uses an emoji to make it easier to find in the logs
+  console.log(chalk.green("✅ Plan validated successfully!"));
   return {
     rawPlan,
     parsedPlan,

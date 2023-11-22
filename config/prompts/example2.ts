@@ -10,6 +10,9 @@ import Agent from "./agent"; // import agent
 const fileContent = await fs.readFile("./main.py", "utf8");
 
 const agent = new Agent({
+  // here you define the task for the sub-agent. It should be simpler than your main task.
+  // in this case, the sub-agent's task is simpler than the main because it only has to fix the code,
+  // without thinking about reading/writing files.
   task: "Give me the fixed version of this python code.",
   input: {
     code: fileContent,
