@@ -13,6 +13,10 @@ execution.
   evaluating plans before they're put into action, ensuring high-quality
   execution.
 
+## Example Usage
+
+<img src="./fix.png" alt="Faithful Agent Example" width="600" style="border-radius: 10px;">
+
 ## Why TypeScript? 🤔
 
 TypeScript is chosen for its strict type system, offering a level of formal
