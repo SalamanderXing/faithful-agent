@@ -13,10 +13,6 @@ execution.
   evaluating plans before they're put into action, ensuring high-quality
   execution.
 
-## Example Usage
-
-<img src="./fix.png" alt="Faithful Agent Example" max-width="600" style="border-radius: 20px;">
-
 ## Why TypeScript? 🤔
 
 TypeScript is chosen for its strict type system, offering a level of formal
@@ -33,6 +29,16 @@ This robustness is vital in ensuring plan accuracy and reliability.
    meets all criteria.
 4. **Execution**: The agent, along with any sub-agents it creates, begins
    executing the validated plan.
+
+## Example Usage
+
+Try executing a task such as:
+
+`Fix the file main.js and write the fixed code to main_fixed.js`
+
+<img src="./fix.png" alt="Faithful Agent Example" max-width="600" style="border-radius: 20px;">
+
+
 
 ## About the Model
 
