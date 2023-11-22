@@ -1,19 +1,31 @@
-import fs from 'fs/promises';
-import Agent from './agent'; // import agent
+import fs from "fs/promises";
+import Agent from "./agent"; // import agent
 
-const fileContent = await fs.readFile('main.js', 'utf8');
+// {
+//   "task": "Fix the file main.js and write the fixed code to main_fixed.js"
+// }
+
+const fileContent = await fs.readFile("./main.js", "utf8");
 
 const agent = new Agent({
-  task: 'Fix the JavaScript code in main.js and write the fixed version in main_fixed.js',
-  input: undefined,
-  outputSchema: undefined,
+  // here you define the task for the sub-agent. It should be simpler than your main task.
+  // in this case, the sub-agent's task is simpler than the main because it only has to fix the code,
+  // without thinking about reading/writing files.
+  task: "Fix the given JavaScript code.",
+  input: {
+    code: fileContent,
+  },
+  // if you want the agent to return something, you must define an outputSchema!
+  outputSchema: {
+    type: "object",
+    properties: {
+      fixedCode: {
+        type: "string",
+      },
+    },
+  },
 });
+// fixedCode is defined in the schema above
+const { fixedCode } = await agent.run(); // run takes no arguments
 
-try {
-  await agent.run();
-} catch (error) {
-  console.error(error);
-}
-
-const fixedContent = await fs.readFile('main_fixed.js', 'utf8');
-await fs.writeFile('main_fixed.js', fixedContent);
+await fs.writeFile("./main_fixed.js", fixedCode);
