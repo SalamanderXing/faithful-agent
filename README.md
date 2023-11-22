@@ -43,7 +43,8 @@ Thanks [@Teknium1](https://twitter.com/Teknium1),
 
 ## Installation and Setup
 
-1. **Prerequisites**: Install [Bun](https://bun.sh).
+1. **Prerequisites**: The easiest way to run it is with [Bun](https://bun.sh)
+   but you can also use `ts-node`.
 2. **Clone and Install**:
    ```bash
    git clone https://github.com/salamanderXing/faithful-agent
