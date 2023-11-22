@@ -47,6 +47,7 @@ Thanks [@Teknium1](https://twitter.com/Teknium1),
 2. **Clone and Install**:
    ```bash
    git clone https://github.com/salamanderXing/faithful-agent
+   cd faithful-agent
    bun install
    ```
 3. **Start Ollama (optional)**:
