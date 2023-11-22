@@ -34,11 +34,12 @@ This robustness is vital in ensuring plan accuracy and reliability.
 
 Try executing a task such as:
 
-`Fix the file main.js and write the fixed code to main_fixed.js`
+_Fix the file main.js and write the fixed code to main_fixed.js_
+
+The model will generate a plan which you can execute. Notice the plan includes
+spawning another Agent in this case.
 
 <img src="./fix.png" alt="Faithful Agent Example" max-width="600" style="border-radius: 20px;">
-
-
 
 ## About the Model
 
