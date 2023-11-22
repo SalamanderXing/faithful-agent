@@ -34,7 +34,7 @@ This robustness is vital in ensuring plan accuracy and reliability.
 
 Try executing a task such as:
 
-_Fix the file main.js and write the fixed code to main_fixed.js_
+> _Fix the file main.js and write the fixed code to main_fixed.js_
 
 The model will generate a plan which you can execute. Notice the plan includes
 spawning another Agent in this case.
