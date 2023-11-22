@@ -65,8 +65,7 @@ Thanks [@Teknium1](https://twitter.com/Teknium1),
 ## Contributing
 
 Your contributions and feedback are highly valued. If you're building upon this
-project, please acknowledge "Faithful Agent". For contribution guidelines, visit
-our [GitHub page](https://github.com/salamanderxing).
+project, please acknowledge "Faithful Agent".
 
 ## Future Directions
 
