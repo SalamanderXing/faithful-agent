@@ -1,10 +1,9 @@
 # Faithful Agent 🐕
 
-Faithful Agent started as a curiosity-driven experiment, exploring how we could
-make an AI model smarter by harnessing the power of a language's Language Server
-Protocol (LSP). It's an adventure in blending AI with advanced programming
-language features to see how far we can push the boundaries of intelligent
-planning and execution.
+Faithful Agent is an experiment exploring how we could make an LLM model smarter
+by harnessing the power of a language's Language Server Protocol (LSP). It's a
+test to see how far we can push the boundaries of intelligent planning and
+execution.
 
 ## Features
 
@@ -43,11 +42,21 @@ offers a balance between performance and the ability to run locally.
 1. **Prerequisites**: Install [Bun](https://bun.sh).
 2. **Clone and Install**:
    ```bash
-   git clone [repository URL]
+   git clone https://github.com/salamanderXing/faithful-agent
    bun install
    ```
-3. **Running the Model**: Use Ollama for local execution or
-   [Replicate](https://replicate.com) for remote operations.
+3. **Start Ollama (optional)**:
+
+   ```bash
+   ollama serve
+   ```
+
+4. **Run Faithful Agent**
+   ```bash
+   bun start
+   ```
+   It will prompt you first what is its task and then again to confirm each plan
+   before execution.
 
 ## Citing This Work
 
@@ -66,7 +75,8 @@ our [GitHub page](https://github.com/salamanderxing).
 
 ## Future Directions
 
-Faithful Agent is under heavy development. Some near-term experiments include
+Faithful Agent is under heavy development and still unstable. Some near-term
+experiments include
 
 - fixing bugs
 - testing it with larger models
